@@ -16,11 +16,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddHttpClient<IThirdPartyApiClient, ThirdPartyApiClient>(client =>
 {
-    // Configura la dirección base.
     client.BaseAddress = new Uri(builder.Configuration["ThirdPartyService:BaseUrl"]
                                 ?? "https://api.externaldomain.com/");
 
-    // Ejemplo de un encabezado predeterminado
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
@@ -60,14 +58,7 @@ builder.Services.AddAuthentication("Bearer")
 
 
 // Servicios de terceros con HTTPClientFactory
-
-
-
 var app = builder.Build();
-
-
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
