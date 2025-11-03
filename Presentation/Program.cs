@@ -13,10 +13,20 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Inyección de Dependencias
+// Servicios
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IReadingListService, ReadingListService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IVoteService, VoteService>();
 
-// Cliente Tipado con HttpClientFactory para servicios de terceros
+// Repositorios
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<IReadingListRepository, ReadingListRepository>();
+builder.Services.AddScoped<IVoteRepository, VoteRepository>();
+
+// Cliente tipado para servicios de terceros
 builder.Services.AddHttpClient<IThirdPartyApiClient, ThirdPartyApiClient>(client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ThirdPartyService:BaseUrl"]

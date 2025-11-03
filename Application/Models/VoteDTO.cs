@@ -19,9 +19,9 @@ namespace Application.Models
                 Id = vote.Id,
                 Valor = vote.Valor,
                 UsuarioId = vote.UsuarioId,
-                UsuarioNombre = vote.Usuario.Nombre,
+                UsuarioNombre = vote.Usuario?.Nombre ?? string.Empty,
                 LibroId = vote.LibroId,
-                LibroTitulo = vote.Libro.Titulo
+                LibroTitulo = vote.Libro?.Titulo ?? string.Empty
             };
 
         public static List<VoteDTO> CreateList(IEnumerable<Vote> votes)

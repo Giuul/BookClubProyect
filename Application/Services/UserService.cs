@@ -2,6 +2,7 @@
 using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
+using BCrypt.Net;
 
 namespace Application.Services
 {
@@ -22,11 +23,16 @@ namespace Application.Services
 
         public async Task<UserDTO> RegisterAsync(UserDTO dto)
         {
+            if (string.IsNullOrEmpty(dto.Password))
+                throw new ArgumentException("La contraseña no puede estar vacía.");
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
             var user = new User
             {
                 Nombre = dto.Nombre,
                 Email = dto.Email,
-                Password = dto.Password ?? string.Empty,
+                Password = hashedPassword,
                 Rol = Enum.TryParse<Rol>(dto.Rol, out var rol) ? rol : Rol.usuario
             };
 
@@ -41,9 +47,12 @@ namespace Application.Services
 
             user.Nombre = dto.Nombre;
             user.Email = dto.Email;
+
             if (!string.IsNullOrEmpty(dto.Password))
-                user.Password = dto.Password;
-            user.Rol = Enum.TryParse<Rol>(dto.Rol, out var rol) ? rol : Rol.usuario;
+                user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+            if (!string.IsNullOrEmpty(dto.Rol) && Enum.TryParse<Rol>(dto.Rol, out var rol))
+                user.Rol = rol;
 
             _repo.Update(user);
             await _repo.SaveChangesAsync();

@@ -19,7 +19,7 @@ namespace Application.Models
                 Descripcion = list.Descripcion,
                 EsCompartida = list.EsCompartida,
                 CreadorId = list.CreadorId,
-                CreadorNombre = list.Creador.Nombre
+                CreadorNombre = list.Creador?.Nombre ?? "Desconocido"
             };
 
         public static List<ReadingListDTO> CreateList(IEnumerable<ReadingList> lists)
