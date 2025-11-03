@@ -10,18 +10,19 @@ namespace Application.Models
         public string Rol { get; set; } = "usuario";
         public string? Password { get; set; }
 
+        public List<ReadingListDTO> Listas { get; set; } = new List<ReadingListDTO>();
+
         public static UserDTO Create(User user) => new UserDTO
-           {
-               Id = user.Id,
-               Nombre = user.Nombre,
-               Email = user.Email,
-               Rol = user.Rol.ToString()
-           };
+        {
+            Id = user.Id,
+            Nombre = user.Nombre,
+            Email = user.Email,
+            Rol = user.Rol.ToString(),
+            Listas = user.ListasCreadas?.Select(ReadingListDTO.Create).ToList() ?? new List<ReadingListDTO>()
+        };
 
         public static List<UserDTO> CreateList(IEnumerable<User> users)
             => users.Select(Create).ToList();
     }
-
-
 }
 

@@ -66,9 +66,11 @@ namespace Application.Services
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Rol.ToString())
-            };
+    };
 
             var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],     
+                audience: _config["Jwt:Audience"],  
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(3),
                 signingCredentials: creds
@@ -76,5 +78,6 @@ namespace Application.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

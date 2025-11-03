@@ -21,5 +21,13 @@ namespace Infrastructure.Repositories
                 .Include(r => r.Libros)
                 .ToListAsync();
         }
+
+        public override async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.Users
+                .Include(u => u.ListasCreadas)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
     }
 }

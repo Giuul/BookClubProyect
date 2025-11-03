@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Votes
                 .Where(v => v.LibroId == libroId)
+                .Include(v => v.Libro)
                 .Include(v => v.Usuario)
                 .ToListAsync();
         }

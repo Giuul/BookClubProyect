@@ -23,5 +23,14 @@ namespace Infrastructure.Repositories
                 .Where(b => b.ListId == listId)
                 .ToListAsync();
         }
+
+        public override async Task<ReadingList?> GetByIdAsync(int id)
+        {
+            return await _context.ReadingLists
+                .Include(r => r.Creador)
+                .Include(r => r.Libros)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
+
     }
 }

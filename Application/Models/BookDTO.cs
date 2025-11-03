@@ -14,7 +14,8 @@ namespace Application.Models
         public string ListaLecturaTitulo { get; set; } = string.Empty;
 
         public static BookDTO Create(Book book)
-            => new BookDTO
+        {
+            return new BookDTO
             {
                 Id = book.Id,
                 Titulo = book.Titulo,
@@ -22,8 +23,9 @@ namespace Application.Models
                 Genero = book.Genero,
                 Resenia = book.Resenia,
                 ListId = book.ListId,
-                ListaLecturaTitulo = book.ListaLectura.Titulo
+                ListaLecturaTitulo = book.ListaLectura?.Titulo ?? "Sin lista"
             };
+        }
 
         public static List<BookDTO> CreateList(IEnumerable<Book> books)
             => books.Select(Create).ToList();
