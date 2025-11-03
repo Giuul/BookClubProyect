@@ -16,9 +16,12 @@ namespace Infrastructure.Clients
             _httpClient = httpClient;
         }
 
-        public async Task<string> GetSomeDataAsync(string resourceId)
+        public async Task<string> SearchBooksAsync(string query)
         {
-            var response = await _httpClient.GetStringAsync($"/api/v1/data/{resourceId}");
+            var encodedQuery = System.Net.WebUtility.UrlEncode(query);
+
+            var response = await _httpClient.GetStringAsync($"volumes?q={encodedQuery}");
+
             return response;
         }
     }

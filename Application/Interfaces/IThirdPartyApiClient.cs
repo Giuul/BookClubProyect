@@ -8,6 +8,6 @@ namespace Application.Interfaces
 {
     public interface IThirdPartyApiClient
     {
-        Task<string> GetSomeDataAsync(string resourceId);
+        Task<string> SearchBooksAsync(string query);
     }
 }
