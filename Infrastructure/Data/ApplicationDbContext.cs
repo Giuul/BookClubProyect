@@ -61,11 +61,6 @@ namespace Infrastructure.Data
             modelBuilder.Entity<Vote>().HasData(CreateVoteSeed());
 
             base.OnModelCreating(modelBuilder);
-
-            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-            {
-                relationship.DeleteBehavior = DeleteBehavior.NoAction;
-            }
         }
 
         private User[] CreateUserSeed()
