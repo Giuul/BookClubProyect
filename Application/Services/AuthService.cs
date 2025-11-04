@@ -44,7 +44,7 @@ namespace Application.Services
 
             var user = new User
             {
-                Nombre = dto.Email.Split('@')[0], 
+                Nombre = dto.Name, 
                 Email = dto.Email,
                 Password = hashedPassword,
                 Rol = Rol.usuario
