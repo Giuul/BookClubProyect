@@ -2,6 +2,7 @@
 using Application.Models;
 using Domain.Entities;
 using Domain.Interfaces;
+using System; 
 
 namespace Application.Services
 {
@@ -22,6 +23,13 @@ namespace Application.Services
 
         public async Task<BookDTO> CreateAsync(BookDTO dto)
         {
+            var existingBook = await _repo.GetByTitleAndAuthorAsync(dto.Titulo, dto.Autor);
+
+            if (existingBook != null)
+            {
+                throw new InvalidOperationException("Ya existe un libro con el mismo título y autor.");
+            }
+
             var book = new Book
             {
                 Titulo = dto.Titulo,
@@ -39,6 +47,16 @@ namespace Application.Services
         public async Task<BookDTO> UpdateAsync(int id, BookDTO dto)
         {
             var book = await _repo.GetByIdAsync(id) ?? throw new Exception("Libro no encontrado.");
+
+            if (book.Titulo != dto.Titulo || book.Autor != dto.Autor)
+            {
+                var existingBook = await _repo.GetByTitleAndAuthorAsync(dto.Titulo, dto.Autor);
+
+                if (existingBook != null && existingBook.Id != id) 
+                {
+                    throw new InvalidOperationException("La edición intenta crear un libro duplicado (mismo título y autor de otro libro).");
+                }
+            }
 
             book.Titulo = dto.Titulo;
             book.Autor = dto.Autor;
@@ -62,4 +80,3 @@ namespace Application.Services
         }
     }
 }
-

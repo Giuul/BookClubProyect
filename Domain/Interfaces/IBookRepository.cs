@@ -7,6 +7,8 @@ namespace Domain.Interfaces
         Task<IEnumerable<Book>> GetByGeneroAsync(string genero);
         Task<IEnumerable<Vote>> GetVotesByBookIdAsync(int bookId);
         Task<Book?> GetByTituloAsync(string titulo);
+        Task<Book?> GetByTitleAndAuthorAsync(string title, string author);
+
 
     }
 }
