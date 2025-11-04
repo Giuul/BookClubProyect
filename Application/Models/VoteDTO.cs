@@ -24,6 +24,12 @@ namespace Application.Models
                 LibroTitulo = vote.Libro?.Titulo ?? string.Empty
             };
 
+        public class VoteCreateDTO
+        {
+            public string LibroTitulo { get; set; } = string.Empty;
+            public int Valor { get; set; }
+        }
+
         public static List<VoteDTO> CreateList(IEnumerable<Vote> votes)
             => votes.Select(Create).ToList();
     }
