@@ -32,5 +32,10 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
+        public async Task<Book?> GetByTituloAsync(string titulo)
+        {
+            return await _context.Books
+                .FirstOrDefaultAsync(b => b.Titulo.ToLower() == titulo.ToLower());
+        }
     }
 }

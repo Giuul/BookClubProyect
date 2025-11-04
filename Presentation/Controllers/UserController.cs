@@ -2,6 +2,7 @@
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -45,9 +46,19 @@ namespace Presentation.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var userRole = User.FindFirst(ClaimTypes.Role)!.Value;
+
+            if (currentUserId != id && userRole != "admin")
+                return StatusCode(403, "No tienes permisos para eliminar este usuario.");
+
             var result = await _service.DeleteAsync(id);
-            if (!result) return NotFound();
+
+            if (!result)
+                return NotFound("El usuario no existe.");
+
             return NoContent();
         }
+
     }
 }

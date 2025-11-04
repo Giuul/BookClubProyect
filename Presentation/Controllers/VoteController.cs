@@ -2,6 +2,7 @@
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Application.Models.VoteDTO;
 
 namespace Presentation.Controllers
 {
@@ -29,7 +30,12 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] VoteDTO dto) => Ok(await _service.CreateAsync(dto));
+        public async Task<IActionResult> Create([FromBody] VoteCreateDTO dto)
+        {
+            var result = await _service.CreateAsync(dto, User);
+            return Ok(result);
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
