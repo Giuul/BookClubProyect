@@ -53,15 +53,16 @@ namespace Presentation.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(new { message = ex.Message });
+                return Conflict(ex.Message);
             }
             catch (Exception e)
             {
                 if (e.Message.Contains("Libro no encontrado"))
                 {
-                    return NotFound(new { message = e.Message });
+                    return NotFound(e.Message);
                 }
-                return StatusCode(500, new { message = "Ocurrió un error inesperado al actualizar el libro." });
+
+                return StatusCode(500, "Ocurrió un error inesperado al actualizar el libro.");
             }
         }
 
@@ -69,8 +70,11 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
-            if (!result) return NotFound();
-            return NoContent();
+
+            if (!result)
+                return NotFound("No se pudo eliminar el libro. El ID no existe.");
+
+            return Ok("Libro eliminado con éxito.");
         }
     }
 }

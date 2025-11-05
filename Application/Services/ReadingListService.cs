@@ -58,5 +58,43 @@ namespace Application.Services
             await _repo.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ICollection<ReadingListDTO>> GetAllVisibleForUserAsync(int userId)
+        {
+            var all = await _repo.GetAllAsync();
+
+            var visible = all.Where(r =>
+                r.CreadorId == userId ||   
+                r.EsCompartida             
+            );
+
+            return ReadingListDTO.CreateList(visible);
+        }
+
+        public async Task<IEnumerable<BookDTO>> GetBooksInListAsync(int listId)
+        {
+            var books = await _repo.GetBooksByListIdAsync(listId);
+            return books.Select(b => BookDTO.Create(b));
+        }
+
+        public async Task AddBookAsync(int listId, int bookId)
+        {
+            await _repo.AddBookToListAsync(listId, bookId);
+            await _repo.SaveChangesAsync();
+        }
+
+        public async Task<bool> RemoveBookAsync(int listId, int bookId)
+        {
+            var list = await _repo.GetByIdAsync(listId);
+            if (list == null) return false;
+
+            var book = list.Libros.FirstOrDefault(b => b.Id == bookId);
+            if (book == null) return false;
+
+            _repo.DeleteBook(book);
+            await _repo.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

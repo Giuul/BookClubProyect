@@ -24,12 +24,38 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public override async Task<ReadingList?> GetByIdAsync(int id)
+        public override async Task<IEnumerable<ReadingList>> GetAllAsync()
         {
             return await _context.ReadingLists
-                .Include(r => r.Creador)
-                .Include(r => r.Libros)
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .Include(r => r.Creador)    
+                .Include(r => r.Libros)      
+                .ToListAsync();
+        }
+
+        public async Task AddBookToListAsync(int listId, int bookId)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+            if (book == null) throw new Exception("El libro no existe.");
+
+            book.ListId = listId;
+            _context.Books.Update(book);
+        }
+
+        public async Task<bool> RemoveBookFromListAsync(int listId, int bookId)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId && b.ListId == listId);
+            if (book == null) return false;
+            book.ListId = 0;
+            _context.Books.Update(book);
+            return true;
+        }
+        public async Task<Book?> GetBookByIdAsync(int bookId)
+        {
+            return await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
+        }
+        public void DeleteBook(Book book)
+        {
+            _context.Books.Remove(book);
         }
 
     }

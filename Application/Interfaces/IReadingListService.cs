@@ -9,5 +9,10 @@ namespace Application.Interfaces
         Task<ReadingListDTO> CreateAsync(ReadingListDTO dto);
         Task<ReadingListDTO> UpdateAsync(int id, ReadingListDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<ICollection<ReadingListDTO>> GetAllVisibleForUserAsync(int userId);
+        Task<IEnumerable<BookDTO>> GetBooksInListAsync(int listId);
+        Task AddBookAsync(int listId, int bookId);
+        Task<bool> RemoveBookAsync(int listId, int bookId);
+
     }
 }

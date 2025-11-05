@@ -10,7 +10,7 @@ namespace Application.Models
         public string Genero { get; set; } = string.Empty;
         public string? Resenia { get; set; }
 
-        public int ListId { get; set; }
+        public int? ListId { get; set; }
         public string ListaLecturaTitulo { get; set; } = string.Empty;
 
         public static BookDTO Create(Book book)

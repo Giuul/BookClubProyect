@@ -19,8 +19,9 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO dto)
         {
             var result = await _authService.LoginAsync(dto);
+
             if (result == null)
-                return Unauthorized(new { message = "Credenciales inválidas" });
+                return Unauthorized("Credenciales inválidas");
 
             return Ok(result);
         }
@@ -28,8 +29,19 @@ namespace Presentation.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] LoginRequestDTO dto)
         {
-            var user = await _authService.RegisterAsync(dto);
-            return Ok(user);
+            try
+            {
+                var user = await _authService.RegisterAsync(dto);
+                return Ok(user);
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("ya existe"))
+                    return Conflict(e.Message);
+
+                return StatusCode(500, "Ocurrió un error inesperado al registrar el usuario.");
+            }
         }
     }
 }
+

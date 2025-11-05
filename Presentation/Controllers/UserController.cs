@@ -22,10 +22,10 @@ namespace Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userRole != "admin")
-                return StatusCode(403, new { message = "No tienes permisos para ver los usuarios." });
+                return StatusCode(403, "No tienes permisos para ver los usuarios.");
 
             return Ok(await _service.GetAllAsync());
         }
@@ -37,10 +37,10 @@ namespace Presentation.Controllers
             var currentUserRole = User.FindFirst(ClaimTypes.Role)!.Value;
 
             if (currentUserRole != "admin" && currentUserId != id)
-                return StatusCode(403, new { message = "No tienes permisos para ver la información de este usuario." });
+                return StatusCode(403, "No tienes permisos para ver la información de este usuario.");
 
             var user = await _service.GetByIdAsync(id);
-            if (user == null) return NotFound(new { message = "El usuario no existe." });
+            if (user == null) return NotFound("El usuario no existe.");
 
             return Ok(user);
         }
@@ -49,10 +49,10 @@ namespace Presentation.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] UserDTO dto)
         {
             var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var currentUserRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)!.Value;
+            var currentUserRole = User.FindFirst(ClaimTypes.Role)!.Value;
 
             if (currentUserRole != "admin" && currentUserId != id)
-                return StatusCode(403, new { message = "No tienes permisos para editar este usuario." });
+                return StatusCode(403, "No tienes permisos para editar este usuario.");
 
             try
             {
@@ -61,7 +61,10 @@ namespace Presentation.Controllers
             }
             catch (Exception e)
             {
-                return NotFound(new { message = e.Message });
+                if (e.Message.Contains("no encontrado"))
+                    return NotFound(e.Message);
+
+                return StatusCode(500, "Ocurrió un error inesperado al actualizar el usuario.");
             }
         }
 
@@ -85,15 +88,14 @@ namespace Presentation.Controllers
         [HttpDelete("me")]
         public async Task<IActionResult> DeleteMe()
         {
-            var currentUserId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)!.Value);
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             var result = await _service.DeleteAsync(currentUserId);
 
             if (!result)
-                return NotFound(new { message = "El usuario no existe o ya fue eliminado." });
+                return NotFound("El usuario no existe o ya fue eliminado.");
 
-            return Ok(new { message = "Tu cuenta ha sido eliminada correctamente." });
+            return Ok("Tu cuenta ha sido eliminada correctamente.");
         }
-
     }
 }
