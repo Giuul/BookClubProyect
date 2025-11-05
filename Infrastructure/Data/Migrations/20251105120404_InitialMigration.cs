@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
@@ -45,7 +47,7 @@ namespace Infrastructure.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Descripcion = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EsCompartida = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    EsCompartida = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValue: false),
                     CreadorId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -115,6 +117,45 @@ namespace Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Nombre", "Password", "Rol" },
+                values: new object[,]
+                {
+                    { 1, "valen@gmail.com", "Valentina García", "$2a$11$Enqd0wYnJdpdRJ3iyHgO8eNgfairkHn8aA4zr5iktih3vE9jWHLqm", "usuario" },
+                    { 2, "anto@gmail.com", "Antonella Garcia", "$2a$11$prLB4FnLt9wpX.TPY/QPte3L0cW9nEm1db6nteWyIUwc0MS43mTZm", "usuario" },
+                    { 3, "giuli@gmail.com", "Giuliana Alonzo", "$2a$11$/I0fh2zk8wqZQtNtxNUJ2eukO1CXvmZM17niOk3pZvHN0Yz/9jwO.", "admin" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ReadingLists",
+                columns: new[] { "Id", "CreadorId", "Descripcion", "Titulo" },
+                values: new object[,]
+                {
+                    { 1, 1, "Libros favoritos", "Favoritos de Valen" },
+                    { 2, 2, "Libros de programación", "Lecturas de Anto" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Books",
+                columns: new[] { "Id", "Autor", "Genero", "ListId", "Resenia", "Titulo" },
+                values: new object[,]
+                {
+                    { 1, "Jane Austen", "Romance", 2, null, "Orgullo y Prejuicio" },
+                    { 2, "J.R.R. Tolkien", "Fantasía", 1, null, "El Hobbit" },
+                    { 3, "Gabriel García Márquez", "Realismo mágico", 1, null, "Cien años de soledad" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Votes",
+                columns: new[] { "Id", "LibroId", "UsuarioId", "Valor" },
+                values: new object[,]
+                {
+                    { 1, 1, 1, 5 },
+                    { 2, 2, 2, 4 },
+                    { 3, 3, 2, 5 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Books_ListId",
