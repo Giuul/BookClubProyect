@@ -7,27 +7,11 @@
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedData : Migration
+    public partial class SaveData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Books_ReadingLists_ListId",
-                table: "Books");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ReadingLists_Users_CreadorId",
-                table: "ReadingLists");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Votes_Books_LibroId",
-                table: "Votes");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Votes_Users_UsuarioId",
-                table: "Votes");
-
             migrationBuilder.AlterColumn<bool>(
                 name: "EsCompartida",
                 table: "ReadingLists",
@@ -42,9 +26,9 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "Email", "Nombre", "Password", "Rol" },
                 values: new object[,]
                 {
-                    { 1, "valen@gmail.com", "Valentina García", "$2a$11$2VpNSVIhqk/IxJPzQTS4Y.N5.JPv/QjEpHHOmy8U/FBUEUbbZTMam", "usuario" },
-                    { 2, "anto@gmail.com", "Antonella Garcia", "$2a$11$NpV0Bt34G87hJf2QpNvur.sPSavQi6kJ2063CArrPvMxwI.M6rHJ2", "usuario" },
-                    { 3, "giuli@gmail.com", "Giuliana Alonzo", "$2a$11$6Vy0hkc/42kV4DzmKP5OyerKtTuacCidh91VtFOn7IqqMgh89D.Ku", "admin" }
+                    { 1, "valen@gmail.com", "Valentina García", "$2a$11$sVpwtDAQq2R.A1cMwtzjzemtHsSJ2fF943vTBP3s/rKF2ADNz/DGO", "usuario" },
+                    { 2, "anto@gmail.com", "Antonella Garcia", "$2a$11$xHjiX5IWuDuIFmISx9mrWOlrH9IJGJoNWlJYNWjw77gpCgXmtXodW", "usuario" },
+                    { 3, "giuli@gmail.com", "Giuliana Alonzo", "$2a$11$owt7SWM7itbzeYrb/wxm1OK1XBnpFi3ptbQFri7ZgUU36V.IAJU8G", "admin" }
                 });
 
             migrationBuilder.InsertData(
@@ -75,55 +59,11 @@ namespace Infrastructure.Data.Migrations
                     { 2, 2, 2, 4 },
                     { 3, 3, 2, 5 }
                 });
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Books_ReadingLists_ListId",
-                table: "Books",
-                column: "ListId",
-                principalTable: "ReadingLists",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ReadingLists_Users_CreadorId",
-                table: "ReadingLists",
-                column: "CreadorId",
-                principalTable: "Users",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Votes_Books_LibroId",
-                table: "Votes",
-                column: "LibroId",
-                principalTable: "Books",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Votes_Users_UsuarioId",
-                table: "Votes",
-                column: "UsuarioId",
-                principalTable: "Users",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Books_ReadingLists_ListId",
-                table: "Books");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ReadingLists_Users_CreadorId",
-                table: "ReadingLists");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Votes_Books_LibroId",
-                table: "Votes");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Votes_Users_UsuarioId",
-                table: "Votes");
-
             migrationBuilder.DeleteData(
                 table: "Users",
                 keyColumn: "Id",
@@ -187,38 +127,6 @@ namespace Infrastructure.Data.Migrations
                 oldClrType: typeof(bool),
                 oldType: "tinyint(1)",
                 oldDefaultValue: false);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Books_ReadingLists_ListId",
-                table: "Books",
-                column: "ListId",
-                principalTable: "ReadingLists",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_ReadingLists_Users_CreadorId",
-                table: "ReadingLists",
-                column: "CreadorId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Votes_Books_LibroId",
-                table: "Votes",
-                column: "LibroId",
-                principalTable: "Books",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Votes_Users_UsuarioId",
-                table: "Votes",
-                column: "UsuarioId",
-                principalTable: "Users",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }
