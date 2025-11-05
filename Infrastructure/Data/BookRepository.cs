@@ -24,11 +24,19 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Book?> GetByTitleAndAuthorAsync(string title, string author)
+        {
+            return await _context.Books
+               
+                .FirstOrDefaultAsync(b => b.Titulo.ToLower() == title.ToLower() &&
+                                          b.Autor.ToLower() == author.ToLower());
+        }
+
         public override async Task<Book?> GetByIdAsync(int id)
         {
             return await _context.Books
                 .Include(b => b.ListaLectura)
-                .Include(b => b.Votos)         
+                .Include(b => b.Votos)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 

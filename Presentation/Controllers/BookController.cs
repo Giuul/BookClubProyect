@@ -2,6 +2,7 @@
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System; 
 
 namespace Presentation.Controllers
 {
@@ -29,7 +30,18 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BookDTO dto) => Ok(await _service.CreateAsync(dto));
+        public async Task<IActionResult> Create([FromBody] BookDTO dto)
+        {
+            try
+            {
+                var book = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookDTO dto)
@@ -39,9 +51,17 @@ namespace Presentation.Controllers
                 var updated = await _service.UpdateAsync(id, dto);
                 return Ok(updated);
             }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
             catch (Exception e)
             {
-                return NotFound(new { message = e.Message });
+                if (e.Message.Contains("Libro no encontrado"))
+                {
+                    return NotFound(new { message = e.Message });
+                }
+                return StatusCode(500, new { message = "Ocurrió un error inesperado al actualizar el libro." });
             }
         }
 
@@ -52,6 +72,5 @@ namespace Presentation.Controllers
             if (!result) return NotFound();
             return NoContent();
         }
-
     }
 }
