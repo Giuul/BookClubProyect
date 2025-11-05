@@ -162,7 +162,7 @@ namespace Infrastructure.Data.Migrations
                             Id = 1,
                             Email = "valen@gmail.com",
                             Nombre = "Valentina García",
-                            Password = "$2a$11$ZnzvKLqafNLyvTr5U0dFiusJZErC4oT9U8r6fzgg0jRSD4soRFqqG",
+                            Password = "$2a$11$sVpwtDAQq2R.A1cMwtzjzemtHsSJ2fF943vTBP3s/rKF2ADNz/DGO",
                             Rol = "usuario"
                         },
                         new
@@ -170,7 +170,7 @@ namespace Infrastructure.Data.Migrations
                             Id = 2,
                             Email = "anto@gmail.com",
                             Nombre = "Antonella Garcia",
-                            Password = "$2a$11$LzKuH4GVMrFD/bvl6YREzeMT4lB3QEza7no1pVmV59aeMRpTfXBYm",
+                            Password = "$2a$11$xHjiX5IWuDuIFmISx9mrWOlrH9IJGJoNWlJYNWjw77gpCgXmtXodW",
                             Rol = "usuario"
                         },
                         new
@@ -178,7 +178,7 @@ namespace Infrastructure.Data.Migrations
                             Id = 3,
                             Email = "giuli@gmail.com",
                             Nombre = "Giuliana Alonzo",
-                            Password = "$2a$11$LmIDsjg5EtLFN3z9zY7Td.Vuk5ReV3tBxF9erj.vS2BW3O75hqszC",
+                            Password = "$2a$11$owt7SWM7itbzeYrb/wxm1OK1XBnpFi3ptbQFri7ZgUU36V.IAJU8G",
                             Rol = "admin"
                         });
                 });
