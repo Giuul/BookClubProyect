@@ -27,7 +27,7 @@ namespace Infrastructure.Repositories
         public async Task<Book?> GetByTitleAndAuthorAsync(string title, string author)
         {
             return await _context.Books
-               
+
                 .FirstOrDefaultAsync(b => b.Titulo.ToLower() == title.ToLower() &&
                                           b.Autor.ToLower() == author.ToLower());
         }
@@ -44,6 +44,27 @@ namespace Infrastructure.Repositories
         {
             return await _context.Books
                 .FirstOrDefaultAsync(b => b.Titulo.ToLower() == titulo.ToLower());
+        }
+
+        public async Task<bool> RemoveBookFromReadingListAsync(int bookId, int readingListId)
+        {
+         
+            var joinEntity = _context.Set<Dictionary<string, object>>("BookReadingLists");
+
+            
+            var relationship = await joinEntity
+                .SingleOrDefaultAsync(r =>
+                    (int)r["BookId"] == bookId &&
+                    (int)r["ReadingListId"] == readingListId);
+
+            if (relationship == null)
+            {
+                return false;
+            }
+
+            joinEntity.Remove(relationship);
+
+            return true;
         }
     }
 }

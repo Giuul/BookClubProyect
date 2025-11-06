@@ -76,5 +76,25 @@ namespace Presentation.Controllers
 
             return Ok("Libro eliminado con éxito.");
         }
+
+        [HttpDelete("{bookId}/lists/{readingListId}")]
+        public async Task<IActionResult> RemoveFromReadingList(int bookId, int readingListId)
+        {
+            try
+            {
+                var success = await _service.RemoveBookFromReadingListAsync(bookId, readingListId);
+
+                if (success)
+                {
+                    return NoContent();
+                }
+
+                return NotFound("No se encontró el libro o la lista, o el libro ya no estaba en la lista.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error interno al remover el libro: {ex.Message}");
+            }
+        }
     }
 }
