@@ -19,9 +19,11 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Book>> GetBooksByListIdAsync(int listId)
         {
-            return await _context.Books
-                .Where(b => b.ListId == listId)
-                .ToListAsync();
+            var lista = await _context.ReadingLists
+                .Include(r => r.Libros)
+                .FirstOrDefaultAsync(r => r.Id == listId);
+
+            return lista?.Libros ?? new List<Book>();
         }
 
         public override async Task<IEnumerable<ReadingList>> GetAllAsync()
@@ -34,29 +36,48 @@ namespace Infrastructure.Repositories
 
         public async Task AddBookToListAsync(int listId, int bookId)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
-            if (book == null) throw new Exception("El libro no existe.");
+            var lista = await _context.ReadingLists
+                .Include(r => r.Libros)
+                .FirstOrDefaultAsync(r => r.Id == listId);
 
-            book.ListId = listId;
-            _context.Books.Update(book);
+            var book = await _context.Books.FindAsync(bookId);
+
+            if (lista == null || book == null)
+                throw new Exception("Lista o libro no encontrados.");
+
+            if (!lista.Libros.Contains(book))
+            {
+                lista.Libros.Add(book);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<bool> RemoveBookFromListAsync(int listId, int bookId)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId && b.ListId == listId);
+            var lista = await _context.ReadingLists
+                .Include(r => r.Libros)
+                .FirstOrDefaultAsync(r => r.Id == listId);
+
+            if (lista == null) return false;
+
+            var book = lista.Libros.FirstOrDefault(b => b.Id == bookId);
             if (book == null) return false;
-            book.ListId = 0;
-            _context.Books.Update(book);
+
+            lista.Libros.Remove(book);
+            await _context.SaveChangesAsync();
             return true;
         }
         public async Task<Book?> GetBookByIdAsync(int bookId)
         {
             return await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
         }
-        public void DeleteBook(Book book)
+
+        public async Task DeleteBook(Book book)
         {
             _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
         }
+
 
     }
 }

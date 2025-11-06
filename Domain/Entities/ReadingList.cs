@@ -17,6 +17,6 @@ namespace Domain.Entities
         public int CreadorId { get; set; }
         public User Creador { get; set; } = null!;
 
-        public List<Book> Libros { get; set; } = new List<Book>();
+        public ICollection<Book> Libros { get; set; } = new List<Book>();
     }
 }
