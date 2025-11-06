@@ -13,6 +13,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.ReadingLists
                 .Where(r => r.CreadorId == creadorId)
+                .Include(r => r.Creador)      
                 .Include(r => r.Libros)
                 .ToListAsync();
         }
@@ -20,6 +21,7 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Book>> GetBooksByListIdAsync(int listId)
         {
             var lista = await _context.ReadingLists
+                .Include(r => r.Creador)      
                 .Include(r => r.Libros)
                 .FirstOrDefaultAsync(r => r.Id == listId);
 
@@ -29,27 +31,41 @@ namespace Infrastructure.Repositories
         public override async Task<IEnumerable<ReadingList>> GetAllAsync()
         {
             return await _context.ReadingLists
-                .Include(r => r.Creador)    
-                .Include(r => r.Libros)      
+                .Include(r => r.Creador)
+                .Include(r => r.Libros)
                 .ToListAsync();
         }
 
-        public async Task AddBookToListAsync(int listId, int bookId)
+        public override async Task<ReadingList?> GetByIdAsync(int id)
+        {
+            return await _context.ReadingLists
+                .Include(r => r.Creador)      
+                .Include(r => r.Libros)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
+
+        public async Task<bool> AddBookToListAsync(int listId, int bookId)
         {
             var lista = await _context.ReadingLists
                 .Include(r => r.Libros)
                 .FirstOrDefaultAsync(r => r.Id == listId);
 
-            var book = await _context.Books.FindAsync(bookId);
+            if (lista == null)
+                throw new Exception("La lista no existe.");
 
-            if (lista == null || book == null)
-                throw new Exception("Lista o libro no encontrados.");
+            var libro = await _context.Books.FindAsync(bookId);
+            if (libro == null)
+                throw new Exception("El libro no existe.");
 
-            if (!lista.Libros.Contains(book))
+            if (lista.Libros.Any(l => l.Id == bookId))
             {
-                lista.Libros.Add(book);
-                await _context.SaveChangesAsync();
+                return false; 
             }
+
+            lista.Libros.Add(libro);
+            await _context.SaveChangesAsync();
+
+            return true; 
         }
 
         public async Task<bool> RemoveBookFromListAsync(int listId, int bookId)
@@ -67,6 +83,7 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
         public async Task<Book?> GetBookByIdAsync(int bookId)
         {
             return await _context.Books.FirstOrDefaultAsync(b => b.Id == bookId);
@@ -77,7 +94,5 @@ namespace Infrastructure.Repositories
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
         }
-
-
     }
 }

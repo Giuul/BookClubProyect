@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<bool> DeleteAsync(int id);
         Task<ICollection<ReadingListDTO>> GetAllVisibleForUserAsync(int userId);
         Task<IEnumerable<BookDTO>> GetBooksInListAsync(int listId);
-        Task AddBookAsync(int listId, int bookId);
+        Task<bool> AddBookAsync(int listId, int bookId);
         Task<bool> RemoveBookAsync(int listId, int bookId);
 
     }
