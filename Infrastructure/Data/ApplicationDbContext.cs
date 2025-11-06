@@ -34,10 +34,21 @@ namespace Infrastructure.Data
                 .HasDefaultValue(false);
 
             modelBuilder.Entity<Book>()
-                .HasOne(b => b.ListaLectura)
+                .HasMany(b => b.ReadingLists)
                 .WithMany(rl => rl.Libros)
-                .HasForeignKey(b => b.ListId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .UsingEntity<Dictionary<string, object>>(
+                    "BookReadingLists",
+                    j => j
+                        .HasOne<ReadingList>()
+                        .WithMany()
+                        .HasForeignKey("ReadingListId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                    j => j
+                        .HasOne<Book>()
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                );
 
             modelBuilder.Entity<Vote>()
                 .HasOne(v => v.Usuario)
@@ -59,6 +70,11 @@ namespace Infrastructure.Data
             modelBuilder.Entity<ReadingList>().HasData(CreateReadingListSeed());
             modelBuilder.Entity<Book>().HasData(CreateBookSeed());
             modelBuilder.Entity<Vote>().HasData(CreateVoteSeed());
+            modelBuilder.SharedTypeEntity<Dictionary<string, object>>("BookReadingLists").HasData(
+                   new { BookId = 1, ReadingListId = 2 },
+                   new { BookId = 2, ReadingListId = 1 },
+                   new { BookId = 3, ReadingListId = 1 }
+             );
 
             base.OnModelCreating(modelBuilder);
         }
@@ -122,9 +138,9 @@ namespace Infrastructure.Data
         {
             return new[]
             {
-                new Book { Id = 1, Titulo = "Orgullo y Prejuicio", Autor = "Jane Austen", Genero = "Romance", ListId = 2 },
-                new Book { Id = 2, Titulo = "El Hobbit", Autor = "J.R.R. Tolkien", Genero = "Fantasía", ListId = 1 },
-                new Book { Id = 3, Titulo = "Cien años de soledad", Autor = "Gabriel García Márquez", Genero = "Realismo mágico", ListId = 1 }
+                new Book { Id = 1, Titulo = "Orgullo y Prejuicio", Autor = "Jane Austen", Genero = "Romance" },
+                new Book { Id = 2, Titulo = "El Hobbit", Autor = "J.R.R. Tolkien", Genero = "Fantasía" },
+                new Book { Id = 3, Titulo = "Cien años de soledad", Autor = "Gabriel García Márquez", Genero = "Realismo mágico" }
             };
         }
 
@@ -137,6 +153,7 @@ namespace Infrastructure.Data
                 new Vote { Id = 3, LibroId = 3, UsuarioId = 2, Valor = 5 }
             };
         }
+
 
     }
 }

@@ -35,8 +35,7 @@ namespace Application.Services
                 Titulo = dto.Titulo,
                 Autor = dto.Autor,
                 Genero = dto.Genero,
-                Resenia = dto.Resenia,
-                ListId = dto.ListId
+                Resenia = dto.Resenia
             };
 
             await _repo.AddAsync(book);
@@ -62,7 +61,6 @@ namespace Application.Services
             book.Autor = dto.Autor;
             book.Genero = dto.Genero;
             book.Resenia = dto.Resenia;
-            book.ListId = dto.ListId;
 
             _repo.Update(book);
             await _repo.SaveChangesAsync();

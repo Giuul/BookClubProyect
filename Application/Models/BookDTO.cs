@@ -10,8 +10,7 @@ namespace Application.Models
         public string Genero { get; set; } = string.Empty;
         public string? Resenia { get; set; }
 
-        public int? ListId { get; set; }
-        public string ListaLecturaTitulo { get; set; } = string.Empty;
+        public List<ReadingListInfoDTO> ListasLectura { get; set; } = new();
 
         public static BookDTO Create(Book book)
         {
@@ -22,12 +21,24 @@ namespace Application.Models
                 Autor = book.Autor,
                 Genero = book.Genero,
                 Resenia = book.Resenia,
-                ListId = book.ListId,
-                ListaLecturaTitulo = book.ListaLectura?.Titulo ?? "Sin lista"
+                ListasLectura = book.ReadingLists?
+                    .Select(rl => new ReadingListInfoDTO
+                    {
+                        Id = rl.Id,
+                        Titulo = rl.Titulo
+                    })
+                    .ToList() ?? new List<ReadingListInfoDTO>()
+            
             };
         }
 
         public static List<BookDTO> CreateList(IEnumerable<Book> books)
             => books.Select(Create).ToList();
+
+        public class ReadingListInfoDTO
+        {
+            public int Id { get; set; }
+            public string Titulo { get; set; } = string.Empty;
+        }
     }
 }

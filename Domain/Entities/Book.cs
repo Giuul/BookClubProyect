@@ -15,8 +15,7 @@ namespace Domain.Entities
         public string? Resenia { get; set; }
 
         // Relaciones
-        public int? ListId { get; set; }
-        public ReadingList ListaLectura { get; set; } = null!;
+        public ICollection<ReadingList> ReadingLists { get; set; } = new List<ReadingList>();
         public List<Vote> Votos { get; set; } = new List<Vote>();
     }
 }

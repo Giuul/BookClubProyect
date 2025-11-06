@@ -80,21 +80,12 @@ namespace Application.Services
         public async Task AddBookAsync(int listId, int bookId)
         {
             await _repo.AddBookToListAsync(listId, bookId);
-            await _repo.SaveChangesAsync();
         }
 
         public async Task<bool> RemoveBookAsync(int listId, int bookId)
         {
-            var list = await _repo.GetByIdAsync(listId);
-            if (list == null) return false;
-
-            var book = list.Libros.FirstOrDefault(b => b.Id == bookId);
-            if (book == null) return false;
-
-            _repo.DeleteBook(book);
-            await _repo.SaveChangesAsync();
-
-            return true;
+            return await _repo.RemoveBookFromListAsync(listId, bookId);
         }
+
     }
 }

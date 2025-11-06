@@ -9,7 +9,7 @@ namespace Domain.Interfaces
         Task AddBookToListAsync(int listId, int bookId);
         Task<bool> RemoveBookFromListAsync(int listId, int bookId);
         Task<Book?> GetBookByIdAsync(int bookId);
-        void DeleteBook(Book book);
+        Task DeleteBook(Book book);
 
     }
 }
