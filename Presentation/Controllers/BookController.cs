@@ -2,11 +2,10 @@
 using Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System; 
+using System;
 
 namespace Presentation.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class BooksController : ControllerBase
@@ -29,6 +28,7 @@ namespace Presentation.Controllers
             return Ok(book);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BookDTO dto)
         {
@@ -43,6 +43,7 @@ namespace Presentation.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookDTO dto)
         {
@@ -61,11 +62,11 @@ namespace Presentation.Controllers
                 {
                     return NotFound(e.Message);
                 }
-
                 return StatusCode(500, "Ocurrió un error inesperado al actualizar el libro.");
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -77,6 +78,7 @@ namespace Presentation.Controllers
             return Ok("Libro eliminado con éxito.");
         }
 
+        [Authorize]
         [HttpDelete("{bookId}/lists/{readingListId}")]
         public async Task<IActionResult> RemoveFromReadingList(int bookId, int readingListId)
         {
@@ -85,11 +87,13 @@ namespace Presentation.Controllers
                 var success = await _service.RemoveBookFromReadingListAsync(bookId, readingListId);
 
                 if (success)
-                {
                     return NoContent();
-                }
 
                 return NotFound("No se encontró el libro o la lista, o el libro ya no estaba en la lista.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message); 
             }
             catch (Exception ex)
             {
