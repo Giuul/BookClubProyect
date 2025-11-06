@@ -9,6 +9,7 @@ namespace Application.Interfaces
         Task<BookDTO> CreateAsync(BookDTO dto);
         Task<BookDTO> UpdateAsync(int id, BookDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<bool> RemoveBookFromReadingListAsync(int bookId, int readingListId);
     }
 }
 

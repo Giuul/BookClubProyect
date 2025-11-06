@@ -20,7 +20,21 @@ namespace Application.Services
             var book = await _repo.GetByIdAsync(id);
             return book == null ? null : BookDTO.Create(book);
         }
+        public async Task<bool> RemoveBookFromReadingListAsync(int bookId, int readingListId)
+        {
+     
+            var success = await _repo.RemoveBookFromReadingListAsync(bookId, readingListId);
 
+            if (success)
+            {
+                
+                await _repo.SaveChangesAsync();
+                return true;
+            }
+
+            
+            return false;
+        }
         public async Task<BookDTO> CreateAsync(BookDTO dto)
         {
             var existingBook = await _repo.GetByTitleAndAuthorAsync(dto.Titulo, dto.Autor);

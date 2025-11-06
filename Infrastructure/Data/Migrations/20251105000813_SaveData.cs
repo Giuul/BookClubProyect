@@ -12,6 +12,7 @@ namespace Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Este es el cambio estructural que SÍ queremos aplicar (ALTER TABLE)
             migrationBuilder.AlterColumn<bool>(
                 name: "EsCompartida",
                 table: "ReadingLists",
@@ -21,6 +22,11 @@ namespace Infrastructure.Data.Migrations
                 oldClrType: typeof(bool),
                 oldType: "tinyint(1)");
 
+            // --- INICIO DE DATOS DE SIEMBRA COMENTADOS ---
+            // Estos bloques están COMENTADOS para evitar los errores de 'Duplicate entry'
+            // Ya que los datos ya existen en la DB por una ejecución previa.
+
+            /*
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "Nombre", "Password", "Rol" },
@@ -59,11 +65,14 @@ namespace Infrastructure.Data.Migrations
                     { 2, 2, 2, 4 },
                     { 3, 3, 2, 5 }
                 });
+            */
+            
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+
             migrationBuilder.DeleteData(
                 table: "Users",
                 keyColumn: "Id",
