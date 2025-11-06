@@ -42,12 +42,12 @@ namespace Application.Services
             list.Titulo = dto.Titulo;
             list.Descripcion = dto.Descripcion;
             list.EsCompartida = dto.EsCompartida;
-            list.CreadorId = dto.CreadorId;
 
             _repo.Update(list);
             await _repo.SaveChangesAsync();
             return ReadingListDTO.Create(list);
         }
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -77,15 +77,14 @@ namespace Application.Services
             return books.Select(b => BookDTO.Create(b));
         }
 
-        public async Task AddBookAsync(int listId, int bookId)
+        public async Task<bool> AddBookAsync(int listId, int bookId)
         {
-            await _repo.AddBookToListAsync(listId, bookId);
+            return await _repo.AddBookToListAsync(listId, bookId);
         }
 
         public async Task<bool> RemoveBookAsync(int listId, int bookId)
         {
             return await _repo.RemoveBookFromListAsync(listId, bookId);
         }
-
     }
 }

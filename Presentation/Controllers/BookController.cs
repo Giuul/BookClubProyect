@@ -28,54 +28,55 @@ namespace Presentation.Controllers
             return Ok(book);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BookDTO dto)
         {
-            try
-            {
-                var book = await _service.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new { message = ex.Message });
-            }
+            var role = User.FindFirst("role")?.Value;
+
+            if (role != "Admin")
+                return StatusCode(403, "No tienes permisos para crear libros.");
+
+            var book = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
         }
 
-        [Authorize(Roles = "Admin")]
+
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookDTO dto)
         {
-            try
-            {
-                var updated = await _service.UpdateAsync(id, dto);
-                return Ok(updated);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (Exception e)
-            {
-                if (e.Message.Contains("Libro no encontrado"))
-                {
-                    return NotFound(e.Message);
-                }
-                return StatusCode(500, "Ocurrió un error inesperado al actualizar el libro.");
-            }
+            var role = User.FindFirst("role")?.Value;
+
+            if (role != "Admin")
+                return StatusCode(403, "No tienes permisos para actualizar libros.");
+
+            var updated = await _service.UpdateAsync(id, dto);
+            return Ok(updated);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _service.DeleteAsync(id);
+            var role = User.FindFirst("role")?.Value;
 
-            if (!result)
-                return NotFound("No se pudo eliminar el libro. El ID no existe.");
+            if (role != "Admin")
+                return StatusCode(403, "No tienes permisos para eliminar este libro.");
 
-            return Ok("Libro eliminado con éxito.");
+            try
+            {
+                var result = await _service.DeleteAsync(id);
+
+                if (!result)
+                    return NotFound("No se pudo eliminar el libro. El ID no existe.");
+
+                return Ok("Libro eliminado con éxito.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado al eliminar el libro.");
+            }
         }
 
         [Authorize]
@@ -91,9 +92,9 @@ namespace Presentation.Controllers
 
                 return NotFound("No se encontró el libro o la lista, o el libro ya no estaba en la lista.");
             }
-            catch (UnauthorizedAccessException ex)
+            catch (UnauthorizedAccessException)
             {
-                return Forbid(ex.Message); 
+                return StatusCode(403, "No tienes permisos para eliminar este libro de la lista.");
             }
             catch (Exception ex)
             {

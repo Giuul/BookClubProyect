@@ -95,8 +95,12 @@ namespace Presentation.Controllers
             if (list == null) return NotFound("La lista no existe.");
             if (list.CreadorId != userId) return StatusCode(403, "No puedes modificar esta lista.");
 
-            await _service.AddBookAsync(listId, bookId);
-            return Ok("Libro agregado a la lista.");
+            var agregado = await _service.AddBookAsync(listId, bookId);
+
+            if (!agregado)
+                return Conflict("El libro ya está en esta lista.");
+
+            return Ok("Libro agregado con éxito.");
         }
 
         [HttpDelete("{listId}/books/{bookId}")]
