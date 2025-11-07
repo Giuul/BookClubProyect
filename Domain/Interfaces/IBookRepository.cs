@@ -8,8 +8,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<Vote>> GetVotesByBookIdAsync(int bookId);
         Task<Book?> GetByTituloAsync(string titulo);
         Task<Book?> GetByTitleAndAuthorAsync(string title, string author);
-
-        Task<bool> RemoveBookFromReadingListAsync(int bookId, int readingListId);
     }
 }
 

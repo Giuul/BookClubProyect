@@ -42,7 +42,9 @@ namespace Application.Services
                 votoExistente.Valor = dto.Valor;
                 _voteRepo.Update(votoExistente);
                 await _voteRepo.SaveChangesAsync();
-                return VoteDTO.Create(votoExistente);
+
+                var votoActualizado = await _voteRepo.GetByIdAsync(votoExistente.Id);
+                return VoteDTO.Create(votoActualizado!);
             }
 
             var vote = new Vote
@@ -54,10 +56,11 @@ namespace Application.Services
 
             await _voteRepo.AddAsync(vote);
             await _voteRepo.SaveChangesAsync();
-            return VoteDTO.Create(vote);
+
+            var nuevoVote = await _voteRepo.GetByIdAsync(vote.Id);
+
+            return VoteDTO.Create(nuevoVote!);
         }
-
-
 
         public async Task<bool> DeleteAsync(int id)
         {

@@ -25,24 +25,34 @@ namespace Presentation.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var vote = await _service.GetByIdAsync(id);
-            if (vote == null) return NotFound();
+            if (vote == null)
+                return NotFound("No existe un voto con ese ID.");
+
             return Ok(vote);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] VoteCreateDTO dto)
         {
-            var result = await _service.CreateAsync(dto, User);
-            return Ok(result);
+            try
+            {
+                var result = await _service.CreateAsync(dto, User);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message); 
+            }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
-            if (!result) return NotFound();
-            return NoContent();
+            if (!result)
+                return NotFound("No existe un voto con ese ID.");
+
+            return Ok("Voto eliminado con éxito.");
         }
     }
 }
