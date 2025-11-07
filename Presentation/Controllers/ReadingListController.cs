@@ -22,6 +22,11 @@ namespace Presentation.Controllers
         public async Task<IActionResult> GetAll()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+            if (role == "admin")
+                return Ok(await _service.GetAllAsync());
+
             return Ok(await _service.GetAllVisibleForUserAsync(userId));
         }
 

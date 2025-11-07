@@ -28,78 +28,47 @@ namespace Presentation.Controllers
             return Ok(book);
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BookDTO dto)
         {
-            var role = User.FindFirst("role")?.Value;
-
-            if (role != "Admin")
-                return StatusCode(403, "No tienes permisos para crear libros.");
-
-            var book = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
+            try
+            {
+                var book = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = book.Id }, book);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
 
-
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] BookDTO dto)
         {
-            var role = User.FindFirst("role")?.Value;
-
-            if (role != "Admin")
-                return StatusCode(403, "No tienes permisos para actualizar libros.");
-
-            var updated = await _service.UpdateAsync(id, dto);
-            return Ok(updated);
-        }
-
-        [Authorize]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var role = User.FindFirst("role")?.Value;
-
-            if (role != "Admin")
-                return StatusCode(403, "No tienes permisos para eliminar este libro.");
-
             try
             {
-                var result = await _service.DeleteAsync(id);
-
-                if (!result)
-                    return NotFound("No se pudo eliminar el libro. El ID no existe.");
-
-                return Ok("Libro eliminado con éxito.");
+                var updated = await _service.UpdateAsync(id, dto);
+                return Ok(updated);
             }
-            catch (Exception)
+            catch (InvalidOperationException ex)
             {
-                return StatusCode(500, "Ocurrió un error inesperado al eliminar el libro.");
-            }
-        }
-
-        [Authorize]
-        [HttpDelete("{bookId}/lists/{readingListId}")]
-        public async Task<IActionResult> RemoveFromReadingList(int bookId, int readingListId)
-        {
-            try
-            {
-                var success = await _service.RemoveBookFromReadingListAsync(bookId, readingListId);
-
-                if (success)
-                    return NoContent();
-
-                return NotFound("No se encontró el libro o la lista, o el libro ya no estaba en la lista.");
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return StatusCode(403, "No tienes permisos para eliminar este libro de la lista.");
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error interno al remover el libro: {ex.Message}");
+                return NotFound(ex.Message);
             }
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _service.DeleteAsync(id);
+            if (!result) return NotFound("No se pudo eliminar el libro. El ID no existe.");
+            return Ok("Libro eliminado con éxito.");
         }
     }
 }
