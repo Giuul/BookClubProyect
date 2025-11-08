@@ -74,10 +74,11 @@ builder.Services.AddSwaggerGen(options =>
 
 
 // Configuración de la Base de Datos (MySQL)
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new Exception("No se encontró DefaultConnection en appsettings.json");
 
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 // Configuración de JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ??
