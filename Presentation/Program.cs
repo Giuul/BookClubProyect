@@ -74,8 +74,8 @@ builder.Services.AddSwaggerGen(options =>
 
 
 // Configuración de la Base de Datos (MySQL)
-string connectionString = Environment.GetEnvironmentVariable("DefaultConnection")
-    ?? throw new Exception("La variable de entorno DefaultConnection no está configurada.");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new Exception("No se encontró DefaultConnection en appsettings.json");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
