@@ -24,19 +24,19 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Restore dependencies
-        run: dotnet restore ../../BookClub.sln
+        run: dotnet restore BookClub.sln
 
-      - name: Buil application
-        run: dotnet build ../../BookClub.sln --configuration ${{ env.BUILD_CONFIGURATION }} --no-restore
+      - name: Build application
+        run: dotnet build BookClub.sln --configuration Release --no-restore
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+        run: dotnet publish Presentation/Presentation.csproj -c Release -o ./publish --no-build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          path: ./publish
 
   deploy:
     runs-on: windows-latest
